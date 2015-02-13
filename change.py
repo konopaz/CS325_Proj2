@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+import sys, os, getopt
+
 def changeslow(coins, amount, change = None):
 
   if change == None:
@@ -95,3 +99,92 @@ def changedp(coins, amount, change = None, table = None):
 
   table[amount] = change
   return change
+
+def printHelp():
+  print
+  print os.path.basename(sys.argv[0]) + " [--algorithm|-a dp,greedy,slow] [--help|-h] file1 [file2 ...]",
+  print
+  print "Options"
+  print "\t--help,-h\tprint this help message"
+  print
+  print "Enter the name of the script, algorithm type, and the input"
+  print "filename. Algorithm can be one of dp, greedy, or slow. The"
+  print "default algorithm is dp."
+  print
+  print "The input file must be in the format of one line [X,Y,Z]"
+  print "where the letters are integer coin values and every line"
+  print "after the first is an amount to make change for ie..."
+  print
+  print "[1,2,5]"
+  print "10"
+  print "[1,3,7,26]"
+  print "22"
+  print
+
+def parseCoins(line):
+  line = line.rstrip()
+  line = line[1:len(line) - 1]
+  coins = line.split(",")
+  for i in range(0, len(coins)):
+    coins[i] = int(coins[i])
+
+  return coins
+
+def main(argv):
+
+  try:
+    opts, args = getopt.getopt(argv, "ha:", ["help", "algorithm="])
+  except getopt.GetoptError:
+    printHelp()
+    exit(2)
+
+  if len(args) < 1:
+    printHelp()
+    exit(1)
+
+  algo = "dp"
+
+  for opt in opts:
+
+    if opt[0] == "--help" or opt[0] == "-h":
+      printHelp()
+      exit(1)
+    elif opt[0] == "--algorithm" or opt[0] == "-a":
+
+      if opt[1] in ["dp", "greedy", "slow"]:
+        algo = opt[1]
+      else:
+        print "INVALID ALGORITHM: ", opt[1]
+        printHelp()
+        exit(1)
+
+  for fileName in args:
+
+    inputFile = open(fileName)
+    outputFile = open(fileName[:len(fileName) - 4] + "change.txt", "w")
+
+    while 1:
+
+      coinline = inputFile.readline()
+      if not coinline:
+        break
+
+      coins = parseCoins(coinline)
+
+      amount = int(inputFile.readline().rstrip())
+
+      if algo == "greedy":
+        change = changegreedy(coins, amount)
+      elif algo == "slow":
+        change = changeslow(coins, amount)
+      else:
+        change = changedp(coins, amount)
+
+      outputFile.write(str(change) + "\n")
+      outputFile.write(str(sum(change)) + "\n")
+
+    inputFile.close()
+    outputFile.close()
+
+if __name__ == "__main__":
+  main(sys.argv[1:])
