@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys, os, getopt
+sys.setrecursionlimit(100000)
 
 def changeslow(coins, amount, change = None):
 
