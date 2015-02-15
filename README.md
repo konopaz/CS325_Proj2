@@ -8,4 +8,7 @@ change.py - primary entry point for the program. Provides a cli for running
 
 testchange.py - unit tests for the three algorithm implementations
 
+benchmark.py - script used to benchmark the various algorithm implementations,
+  run benchmark.py -h for usage help
+
 *.txt - various test input files.
